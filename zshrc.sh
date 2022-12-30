@@ -62,9 +62,15 @@ function update_current_git_vars() {
 
 
 git_super_status() {
-	precmd_update_git_vars
+	# dropping precmd_update_git_vars here
+	# per https://github.com/olivierverdier/zsh-git-prompt/pull/58
+	# precmd_update_git_vars
     if [ -n "$__CURRENT_GIT_STATUS" ]; then
-	  STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH%{${reset_color}%}"
+  	  BRANCH_THEME=$ZSH_THEME_GIT_PROMPT_BRANCH
+	  if [[ "$GIT_BRANCH" == "main" || "$GIT_BRANCH" == "master" ]]; then
+	  	  BRANCH_THEME=$ZSH_THEME_GIT_PROMPT_DEFAULT_BRANCH
+	  fi
+	  STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$BRANCH_THEME$GIT_BRANCH%{${reset_color}%}"
 	  if [ "$GIT_BEHIND" -ne "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BEHIND$GIT_BEHIND%{${reset_color}%}"
 	  fi
@@ -96,6 +102,7 @@ git_super_status() {
 ZSH_THEME_GIT_PROMPT_PREFIX="("
 ZSH_THEME_GIT_PROMPT_SUFFIX=")"
 ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
+ZSH_THEME_GIT_PROMPT_DEFAULT_BRANCH="%{$fg_bold[green]%}"
 ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"
 ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[red]%}%{●%G%}"
 ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$fg[red]%}%{✖%G%}"
